@@ -18,3 +18,15 @@ Scratch pad where I plan to develop a base firmware for the Makersbase TFT28 v4.
     SWDIO  SWCLK RESET
 
 Disconnect MKS TFT from printer before connecting ST-LINK. Do not connect ST-LINK 3.3v pin.
+
+
+
+PNS:
+BOOT:
+Pin 37: PB2 : Boot1 : 100k to Vss
+Pin 94: BOOT0: 100k to Vss
+
+Pinx XX : TX: 1K
+
+PA5: Pin 6 of SPI ROM
+PA7: Pin 5 of SPI ROM
