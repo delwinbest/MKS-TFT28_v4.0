@@ -1,0 +1,6 @@
+{
+    "terminal.integrated.env.osx": {
+        "PATH": "/Users/dbest/.platformio/penv/bin:/Users/dbest/.platformio/penv:/usr/local/opt/python/libexec/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin",
+        "PLATFORMIO_CALLER": "vscode"
+    }
+}
