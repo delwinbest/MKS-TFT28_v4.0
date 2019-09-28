@@ -31,5 +31,6 @@ UART2: Octopi
 UART3: Wifi lower
 UART4: Touch controller
 PX11/12, UART1_CTS/RTS: USB
+PA2: Buzzer
 
 
