@@ -58,7 +58,6 @@ osThreadId defaultTaskHandle;
 void StartDefaultTask(void const * argument);
 
 extern void MX_FATFS_Init(void);
-extern void MX_USB_HOST_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /**
@@ -112,14 +111,16 @@ void StartDefaultTask(void const * argument)
   /* init code for FATFS */
   MX_FATFS_Init();
 
-  /* init code for USB_HOST */
-  MX_USB_HOST_Init();
-
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+	  uartPrintln(&huart3, "type something:");
+	  char in[8];
+	  HAL_UART_Receive(&huart3, (uint8_t *)in, 8, 1000);
+	  uartPrint(&huart3, "\n");
+	  HAL_UART_Transmit(&huart3, (uint8_t *)in, 8, 1);
+	  uartPrint(&huart3, "\n\n");
   }
   /* USER CODE END StartDefaultTask */
 }
