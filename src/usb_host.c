@@ -47,7 +47,15 @@ ApplicationTypeDef Appli_state = APPLICATION_IDLE;
  * -- Insert your variables declaration here --
  */
 /* USER CODE BEGIN 0 */
-
+//Include the fatfs library here to be inside user code blocks
+#include "fatfs.h"
+#include "usart.h"
+#include <stdio.h>
+#include <string.h>
+FATFS USBDISKFatFs;           /* File system object for USB disk logical drive */
+FIL MyFile;                   /* File object */
+char USBDISKPath[4];          /* USB Host logical drive path */
+USBH_HandleTypeDef hUSB_Host; /* USB Host handle */
 /* USER CODE END 0 */
 
 /*
@@ -59,6 +67,95 @@ static void USBH_UserProcess(USBH_HandleTypeDef *phost, uint8_t id);
  * -- Insert your external function declaration here --
  */
 /* USER CODE BEGIN 1 */
+void USB_Error_Handler(void)
+{
+  /* USER CODE BEGIN USB_Error_Handler */
+  /* User can add his own implementation to report the HAL error return state */
+  printf("USB Error...\n\r");
+  while(1)
+  {
+  }
+  /* USER CODE END USB_Error_Handler */
+}
+
+static void MSC_Application(void)
+{
+  FRESULT res;                                          /* FatFs function common result code */
+  uint32_t byteswritten, bytesread;                     /* File write/read counts */
+  uint8_t wtext[] = "This is STM32 working with FatFs"; /* File write buffer */
+  uint8_t rtext[100];                                   /* File read buffer */
+
+  /* Register the file system object to the FatFs module */
+  if(f_mount(&USBDISKFatFs, (TCHAR const*)USBDISKPath, 0) != FR_OK)
+  {
+    /* FatFs Initialization Error */
+    USB_Error_Handler();
+  }
+  else
+  {
+      /* Create and Open a new text file object with write access */
+      if(f_open(&MyFile, "Even.TXT", FA_CREATE_ALWAYS | FA_WRITE) != FR_OK)
+      {
+        /* 'STM32.TXT' file Open for write Error */
+        USB_Error_Handler();
+      }
+      else
+      {
+        /* Write data to the text file */
+        res = f_write(&MyFile, wtext, sizeof(wtext), (void *)&byteswritten);
+
+        if((byteswritten == 0) || (res != FR_OK))
+        {
+          /* 'STM32.TXT' file Write or EOF Error */
+          USB_Error_Handler();
+        }
+        else
+        {
+          /* Close the open text file */
+          f_close(&MyFile);
+
+        /* Open the text file object with read access */
+        if(f_open(&MyFile, "Even.TXT", FA_READ) != FR_OK)
+        {
+          /* 'STM32.TXT' file Open for read Error */
+          USB_Error_Handler();
+        }
+        else
+        {
+          /* Read data from the text file */
+          res = f_read(&MyFile, rtext, sizeof(rtext), (void *)&bytesread);
+
+          if((bytesread == 0) || (res != FR_OK))
+          {
+            /* 'STM32.TXT' file Read or EOF Error */
+            USB_Error_Handler();
+          }
+          else
+          {
+            /* Close the open text file */
+            f_close(&MyFile);
+
+            /* Compare read data with the expected data */
+            if((bytesread != byteswritten))
+            {
+              /* Read data is different from the expected data */
+              USB_Error_Handler();
+            }
+            else
+            {
+          /* Success of the demo: no error occurrence */
+              //BSP_LED_On(LED4);
+            	printf("Demo Success...\n\r");
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /* Unlink the USB disk I/O driver */
+  FATFS_UnLinkDriver(USBDISKPath);
+}
 
 /* USER CODE END 1 */
 
@@ -91,6 +188,14 @@ void MX_USB_HOST_Init(void)
 }
 
 /*
+ * Background task
+ */
+void MX_USB_HOST_Process(void)
+{
+  /* USB Host Background task */
+  USBH_Process(&hUsbHostFS);
+}
+/*
  * user callback definition
  */
 static void USBH_UserProcess  (USBH_HandleTypeDef *phost, uint8_t id)
@@ -107,6 +212,7 @@ static void USBH_UserProcess  (USBH_HandleTypeDef *phost, uint8_t id)
 
   case HOST_USER_CLASS_ACTIVE:
   Appli_state = APPLICATION_READY;
+  MSC_Application();
   break;
 
   case HOST_USER_CONNECTION:

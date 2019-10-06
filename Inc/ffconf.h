@@ -25,7 +25,12 @@
 /-----------------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f1xx_hal.h"
-#include "cmsis_os.h"    /* _FS_REENTRANT set to 1 */                
+#include "usbh_core.h"
+#include "usbh_msc.h"
+
+	                    	  	  	  	                    	  	  	  	                    	  	  	  	                    	  	  	  	                                       	  	  	  	                    	  	  	  	                    	  	  	  	                    	  	  	  	                    	  	  	  	                          	  	  	  	                    	  	  	  	                    	  	  	  	                    	  	  	  	                    	  	  	  	                    	  	  	  	                    	  	  	  	                    	  	  	  	                    	  	  	  	                    	  	  	  	                    	  	  	  	                              	  	  	  	                    	  	  	  	                               	  	  	  	                    	           	  	  	                    	  	            	  	                    	  	  	           	                    	  	  	  	                    	  	  	  	                    	  	  	  	                    	  	  	  	                    	  	  	  	                    	  	  	  	                    	  	  	  	                    	  	  	  /* Handle for USB Host */                       
+#define HOST_HANDLE hUsbHostFS   	    
+	                    	  	  	  
 
 /*-----------------------------------------------------------------------------/
 / Functions and Buffer Configurations
@@ -79,6 +84,16 @@
 /* This option switches f_forward() function. (0:Disable or 1:Enable)
 /  To enable it, also _FS_TINY need to be set to 1. */
 
+#define _USE_BUFF_WO_ALIGNMENT  1
+/* This option is available only for usbh diskio interface and allows to disable
+/  the management of the unaligned buffer.
+/  When STM32 USB OTG HS or FS IP is used with internal DMA enabled, this define
+/  must be set to 0 to align data into 32bits through an internal scratch buffer
+/  before being processed by the DMA . Otherwise (DMA not used), this define must
+/  be set to 1 to avoid Data alignment and improve the performance.
+/  Please note that if _USE_BUFF_WO_ALIGNMENT is set to 1 and an unaligned 32bits
+/  buffer is forwarded to the FatFs Write/Read functions, an error will be returned. 
+/  (0: default value or 1: unaligned buffer return an error). */
 /*-----------------------------------------------------------------------------/
 / Locale and Namespace Configurations
 /-----------------------------------------------------------------------------*/
@@ -114,7 +129,7 @@
 /   874  - Thai (OEM, Windows)
 /   1    - ASCII (No extended character. Valid for only non-LFN configuration.) */
 
-#define _USE_LFN     0    /* 0 to 3 */
+#define _USE_LFN     2    /* 0 to 3 */
 #define _MAX_LFN     255    /* Maximum LFN length to handle (12 to 255) */
 /* The _USE_LFN option switches the LFN feature.
 /
@@ -158,7 +173,7 @@
 / Drive/Volume Configurations
 /----------------------------------------------------------------------------*/
 
-#define _VOLUMES    1
+#define _VOLUMES    3
 /* Number of volumes (logical drives) to be used. */
 
 /* USER CODE BEGIN Volumes */  
@@ -231,7 +246,7 @@
 /      can be opened simultaneously under file lock control. Note that the file
 /      lock feature is independent of re-entrancy. */
 
-#define _FS_REENTRANT    1  /* 0:Disable or 1:Enable */
+#define _FS_REENTRANT    0  /* 0:Disable or 1:Enable */
 #define _FS_TIMEOUT      1000 /* Timeout period in unit of time ticks */
 #define _SYNC_t          osSemaphoreId 
 /* The _FS_REENTRANT option switches the re-entrancy (thread safe) of the FatFs

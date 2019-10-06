@@ -25,12 +25,17 @@
 
 #include "ff.h"
 #include "ff_gen_drv.h"
+#include "usbh_diskio.h" /* defines USBH_Driver as external */
 #include "user_diskio.h" /* defines USER_Driver as external */
 
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
 
+extern uint8_t retUSBH; /* Return value for USBH */
+extern char USBHPath[4]; /* USBH logical drive path */
+extern FATFS USBHFatFS; /* File system object for USBH logical drive */
+extern FIL USBHFile; /* File object for USBH */
 extern uint8_t retUSER; /* Return value for USER */
 extern char USERPath[4]; /* USER logical drive path */
 extern FATFS USERFatFS; /* File system object for USER logical drive */

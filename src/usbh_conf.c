@@ -21,7 +21,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usbh_core.h"
-#include "usbh_platform.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -52,7 +51,24 @@ USBH_StatusTypeDef USBH_Get_USB_Status(HAL_StatusTypeDef hal_status);
 /* Private functions ---------------------------------------------------------*/
 
 /* USER CODE BEGIN 1 */
-
+/**
+  * @brief  Port Port Enabled callback.
+  * @param  hhcd: HCD handle
+  * @retval None
+  */
+void HAL_HCD_PortEnabled_Callback(HCD_HandleTypeDef *hhcd)
+{
+  USBH_LL_PortEnabled(hhcd->pData);
+}
+/**
+  * @brief  Port Port Disabled callback.
+  * @param  hhcd: HCD handle
+  * @retval None
+  */
+void HAL_HCD_PortDisabled_Callback(HCD_HandleTypeDef *hhcd)
+{
+  USBH_LL_PortDisabled(hhcd->pData);
+}
 /* USER CODE END 1 */
 
 /*******************************************************************************
@@ -71,8 +87,6 @@ void HAL_HCD_MspInit(HCD_HandleTypeDef* hcdHandle)
     __HAL_RCC_USB_OTG_FS_CLK_ENABLE();
 
     /* Peripheral interrupt init */
-    HAL_NVIC_SetPriority(OTG_FS_IRQn, 5, 0);
-    HAL_NVIC_EnableIRQ(OTG_FS_IRQn);
   /* USER CODE BEGIN USB_OTG_FS_MspInit 1 */
 
   /* USER CODE END USB_OTG_FS_MspInit 1 */
@@ -163,7 +177,7 @@ USBH_StatusTypeDef USBH_LL_Init(USBH_HandleTypeDef *phost)
   hhcd_USB_OTG_FS.Instance = USB_OTG_FS;
   hhcd_USB_OTG_FS.Init.Host_channels = 8;
   hhcd_USB_OTG_FS.Init.speed = HCD_SPEED_FULL;
-  hhcd_USB_OTG_FS.Init.Sof_enable = DISABLE;
+  hhcd_USB_OTG_FS.Init.Sof_enable = ENABLE;
   if (HAL_HCD_Init(&hhcd_USB_OTG_FS) != HAL_OK)
   {
     Error_Handler( );
@@ -398,14 +412,30 @@ USBH_URBStateTypeDef USBH_LL_GetURBState(USBH_HandleTypeDef *phost, uint8_t pipe
   */
 USBH_StatusTypeDef USBH_LL_DriverVBUS(USBH_HandleTypeDef *phost, uint8_t state)
 {
-  if (phost->id == HOST_FS) {
-    MX_DriverVbusFS(state);
-  }
 
   /* USER CODE BEGIN 0 */
 
   /* USER CODE END 0*/
 
+  if (phost->id == HOST_FS)
+  {
+    if (state == 0)
+    {
+      /* Drive high Charge pump */
+      /* ToDo: Add IOE driver control */
+      /* USER CODE BEGIN DRIVE_HIGH_CHARGE_FOR_FS */
+
+      /* USER CODE END DRIVE_HIGH_CHARGE_FOR_FS */
+    }
+    else
+    {
+      /* Drive low Charge pump */
+      /* ToDo: Add IOE driver control */
+      /* USER CODE BEGIN DRIVE_LOW_CHARGE_FOR_FS */
+
+      /* USER CODE END DRIVE_LOW_CHARGE_FOR_FS */
+    }
+  }
   HAL_Delay(200);
   return USBH_OK;
 }

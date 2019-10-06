@@ -26,9 +26,8 @@ BOOT Mode: Boot0 = 0, Boot 1 = 0
 SPI1: SERIAL FLASH MEMORY: Winbond 8MB (64Mb) Serial Flash Memory on SPI1
 SPI3: Two-wire Serial EEPROM AT24C16B / Touch ???
 I2C: Two-wire Serial EEPROM AT24C16B ????
-UART1: Wifi
+UART1: Wifi Top
 UART2: Octopi
-UART3: Wifi lower
 UART4: Touch controller
 PX11/12, UART1_CTS/RTS: USB
 PA2: Buzzer
