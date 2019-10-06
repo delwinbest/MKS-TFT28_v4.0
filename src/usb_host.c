@@ -71,7 +71,7 @@ void USB_Error_Handler(void)
 {
   /* USER CODE BEGIN USB_Error_Handler */
   /* User can add his own implementation to report the HAL error return state */
-  printf("USB Error...\n\r");
+  printf("USB Error...\n");
   while(1)
   {
   }
@@ -94,7 +94,7 @@ static void MSC_Application(void)
   else
   {
       /* Create and Open a new text file object with write access */
-      if(f_open(&MyFile, "Even.TXT", FA_CREATE_ALWAYS | FA_WRITE) != FR_OK)
+      if(f_open(&MyFile, "touchfile.txt", FA_CREATE_ALWAYS | FA_WRITE) != FR_OK)
       {
         /* 'STM32.TXT' file Open for write Error */
         USB_Error_Handler();
@@ -106,7 +106,7 @@ static void MSC_Application(void)
 
         if((byteswritten == 0) || (res != FR_OK))
         {
-          /* 'STM32.TXT' file Write or EOF Error */
+          /* 'touchfile.txt' file Write or EOF Error */
           USB_Error_Handler();
         }
         else
@@ -115,9 +115,9 @@ static void MSC_Application(void)
           f_close(&MyFile);
 
         /* Open the text file object with read access */
-        if(f_open(&MyFile, "Even.TXT", FA_READ) != FR_OK)
+        if(f_open(&MyFile, "touchfile.txt", FA_READ) != FR_OK)
         {
-          /* 'STM32.TXT' file Open for read Error */
+          /* 'touchfile.txt' file Open for read Error */
           USB_Error_Handler();
         }
         else
@@ -127,7 +127,7 @@ static void MSC_Application(void)
 
           if((bytesread == 0) || (res != FR_OK))
           {
-            /* 'STM32.TXT' file Read or EOF Error */
+            /* 'touchfile.txt' file Read or EOF Error */
             USB_Error_Handler();
           }
           else
@@ -143,9 +143,8 @@ static void MSC_Application(void)
             }
             else
             {
-          /* Success of the demo: no error occurrence */
-              //BSP_LED_On(LED4);
-            	printf("Demo Success...\n\r");
+              /* Success of the demo: no error occurrence */
+              printf("Touch File Created\n");
             }
           }
         }
@@ -154,7 +153,7 @@ static void MSC_Application(void)
   }
 
   /* Unlink the USB disk I/O driver */
-  FATFS_UnLinkDriver(USBDISKPath);
+  //FATFS_UnLinkDriver(USBDISKPath);
 }
 
 /* USER CODE END 1 */
