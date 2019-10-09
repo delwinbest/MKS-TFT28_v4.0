@@ -1,7 +1,7 @@
 [PreviousGenFiles]
-HeaderPath=C:/Users/mail/git/MKS-TFT28_v4.0/Inc
+HeaderPath=D:/Users/dbest/Documents/MKS-TFT28_v4.0/Inc
 HeaderFiles=ffconf.h;user_diskio.h;fatfs.h;FreeRTOSConfig.h;usb_host.h;usbh_conf.h;bsp_io.h;bsp_i2c.h;stm32f1xx_it.h;stm32f1xx_hal_conf.h;main.h;gpio.h;tim.h;usart.h;
-SourcePath=C:/Users/mail/git/MKS-TFT28_v4.0/Src
+SourcePath=D:/Users/dbest/Documents/MKS-TFT28_v4.0/Src
 SourceFiles=user_diskio.c;fatfs.c;freertos.c;usb_host.c;usbh_conf.c;bsp_io.c;bsp_i2c.c;stm32f1xx_it.c;stm32f1xx_hal_msp.c;stm32f1xx_hal_timebase_tim.c;main.c;gpio.c;tim.c;usart.c;
 
 [PreviousLibFiles]
