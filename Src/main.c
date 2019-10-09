@@ -20,7 +20,9 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "cmsis_os.h"
 #include "fatfs.h"
+#include "spi.h"
 #include "tim.h"
 #include "usart.h"
 #include "usb_host.h"
@@ -28,7 +30,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "boot_conf.h"
+//#include "boot_conf.h"
 #include <stdio.h>
 #include <string.h>
 /* USER CODE END Includes */
@@ -58,9 +60,8 @@ static void ShortBeep();
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+void MX_FREERTOS_Init(void);
 static void MX_NVIC_Init(void);
-void MX_USB_HOST_Process(void);
-
 /* USER CODE BEGIN PFP */
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
@@ -113,8 +114,7 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM2_Init();
   MX_USART1_UART_Init();
-  MX_USB_HOST_Init();
-  MX_FATFS_Init();
+  MX_SPI1_Init();
 
   /* Initialize interrupts */
   MX_NVIC_Init();
@@ -169,6 +169,14 @@ int main(void)
  */
   /* USER CODE END 2 */
 
+  /* Call init function for freertos objects (in freertos.c) */
+  MX_FREERTOS_Init(); 
+
+  /* Start scheduler */
+  osKernelStart();
+  
+  /* We should never get here as control is now taken by the scheduler */
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -177,7 +185,6 @@ int main(void)
     //HAL_Delay(5000);
     //printf("beep\n\r");
     /* USER CODE END WHILE */
-    MX_USB_HOST_Process();
 
     /* USER CODE BEGIN 3 */
   }
@@ -242,10 +249,10 @@ void SystemClock_Config(void)
 static void MX_NVIC_Init(void)
 {
   /* USART1_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(USART1_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(USART1_IRQn);
   /* OTG_FS_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(OTG_FS_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(OTG_FS_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(OTG_FS_IRQn);
 }
 
@@ -257,6 +264,27 @@ void ShortBeep()
 	HAL_TIM_OC_Stop_IT(&htim2, TIM_CHANNEL_3);
 }
 /* USER CODE END 4 */
+
+/**
+  * @brief  Period elapsed callback in non blocking mode
+  * @note   This function is called  when TIM1 interrupt took place, inside
+  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+  * a global variable "uwTick" used as application time base.
+  * @param  htim : TIM handle
+  * @retval None
+  */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  /* USER CODE BEGIN Callback 0 */
+
+  /* USER CODE END Callback 0 */
+  if (htim->Instance == TIM1) {
+    HAL_IncTick();
+  }
+  /* USER CODE BEGIN Callback 1 */
+
+  /* USER CODE END Callback 1 */
+}
 
 /**
   * @brief  This function is executed in case of error occurrence.

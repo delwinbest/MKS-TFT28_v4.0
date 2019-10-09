@@ -58,10 +58,12 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define BUZZER_PIN_Pin GPIO_PIN_2
-#define BUZZER_PIN_GPIO_Port GPIOA
-#define SDCARD_nCS_Pin_Pin GPIO_PIN_11
-#define SDCARD_nCS_Pin_GPIO_Port GPIOD
+#define BUZZER_Pin GPIO_PIN_2
+#define BUZZER_GPIO_Port GPIOA
+#define FLASH_nCS_Pin GPIO_PIN_9
+#define FLASH_nCS_GPIO_Port GPIOD
+#define SDCARD_nCS_Pin GPIO_PIN_11
+#define SDCARD_nCS_GPIO_Port GPIOD
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

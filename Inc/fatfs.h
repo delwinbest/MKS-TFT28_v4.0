@@ -29,7 +29,7 @@
 #include "user_diskio.h" /* defines USER_Driver as external */
 
 /* USER CODE BEGIN Includes */
-
+#include "spisd_diskio.h" /* defines SPISD_Driver as external */
 /* USER CODE END Includes */
 
 extern uint8_t retUSBH; /* Return value for USBH */
@@ -44,6 +44,17 @@ extern FIL USERFile; /* File object for USER */
 void MX_FATFS_Init(void);
 
 /* USER CODE BEGIN Prototypes */
+extern char SPISD_Path[4];	/* SPI SD card logical drive path */
+extern SPI_HandleTypeDef hspi1;
+
+typedef enum {
+	SPI_SDCARD = 0,
+	SPI_FLASH
+} dselect_t;
+
+void deviceSelect(dselect_t device);
+void deviceDeselect();
+
 
 /* USER CODE END Prototypes */
 #ifdef __cplusplus

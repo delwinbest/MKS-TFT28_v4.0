@@ -28,7 +28,10 @@ FATFS USERFatFS;    /* File system object for USER logical drive */
 FIL USERFile;       /* File object for USER */
 
 /* USER CODE BEGIN Variables */
-
+uint8_t retSPISD;    /* Return value for USER */
+char SPISD_Path[4];   /* USER logical drive path */
+//FATFS USERFatFS;    /* File system object for USER logical drive */
+//FIL USERFile;       /* File object for USER */
 /* USER CODE END Variables */    
 
 void MX_FATFS_Init(void) 
@@ -39,7 +42,7 @@ void MX_FATFS_Init(void)
   retUSER = FATFS_LinkDriver(&USER_Driver, USERPath);
 
   /* USER CODE BEGIN Init */
-  /* additional user code for init */     
+  retSPISD = FATFS_LinkDriver(&SPISD_Driver, SPISD_Path);    // SPI_SD CARD
   /* USER CODE END Init */
 }
 
@@ -56,7 +59,21 @@ DWORD get_fattime(void)
 }
 
 /* USER CODE BEGIN Application */
-     
+void deviceSelect(dselect_t device)  {
+
+	if (device == SPI_SDCARD) {
+		HAL_GPIO_WritePin(FLASH_nCS_GPIO_Port, FLASH_nCS_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(SDCARD_nCS_GPIO_Port, SDCARD_nCS_Pin, GPIO_PIN_RESET);
+	} else {
+		HAL_GPIO_WritePin(SDCARD_nCS_GPIO_Port, SDCARD_nCS_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(FLASH_nCS_GPIO_Port, FLASH_nCS_Pin, GPIO_PIN_RESET);
+	}
+}
+
+void deviceDeselect() {
+	HAL_GPIO_WritePin(SDCARD_nCS_GPIO_Port, SDCARD_nCS_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(FLASH_nCS_GPIO_Port, FLASH_nCS_Pin, GPIO_PIN_SET);
+}
 /* USER CODE END Application */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
